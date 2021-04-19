@@ -1,0 +1,18 @@
+#######################################################################################################################################
+#    public void modifyAttributes(final String dn, final ModificationItem[] mods, LDAPOperationDecorator decorator) {                 #
+#        try {              													      #
+#            modifyAttributesNaming(dn, mods, decorator);									      #
+#        } catch (NamingException e) {                                                                                                #
+#            throw new ModelException("Could not modify attribute for DN [" + dn + "]", e);                                           #
+#        }                                                                                                                            #
+#    }                                                                                                                                #
+#                                                                                                                                     #
+#######################################################################################################################################
+
+RULE Keycloak LDAPOperationManager trace LDAP modifyAttributes
+CLASS org.keycloak.storage.ldap.idm.store.ldap.LDAPOperationManager
+METHOD modifyAttributes(String, ModificationItem[], LDAPOperationDecorator)
+AT ENTRY
+IF TRUE
+DO traceStack("*** Called modifyAttributes(...) with values: dn: " + $1 + ", Modification: " + $2[0] + ", LDAPOperationDecorator: " + $3 + "\n");
+ENDRULE
