@@ -14,5 +14,5 @@ CLASS org.keycloak.storage.ldap.idm.store.ldap.LDAPOperationManager
 METHOD modifyAttributes(String, ModificationItem[], LDAPOperationDecorator)
 AT ENTRY
 IF TRUE
-DO traceStack("*** Called modifyAttributes(...) with values: dn: " + $1 + ", Modification: " + $2[0] + ", LDAPOperationDecorator: " + $3 + "\n");
+DO traceln("*** Called modifyAttributes(...) with values: dn: " + $1 + ", Modification: " + $2[0] + ", LDAPOperationDecorator: " + $3 + "\n");
 ENDRULE
