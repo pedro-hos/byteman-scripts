@@ -1,0 +1,24 @@
+##################################################################################################################################################################
+#    public static BiFunction<List<String>, UserProfileContext, Boolean> isReadOnlyAttributeUnchanged(String attributeName) {
+#        return (newAttrValues, context) -> {
+#            if (newAttrValues == null) {
+#                return true;
+#            }
+#            List<String> existingAttrValues = context.getCurrentProfile() == null ? null : context.getCurrentProfile().getAttributes().getAttribute(attributeName); //after this
+#            boolean result = ObjectUtil.isEqualOrBothNull(newAttrValues, existingAttrValues);
+#
+#            if (!result) {
+#                logger.warnf("Attempt to edit denied attribute '%s' of user '%s'", attributeName, context.getCurrentProfile() == null ? "new user" : context.getCurrentProfile().getAttributes().getFirstAttribute(UserModel.USERNAME));
+#            }
+#            return result;
+#        };
+#    }
+##################################################################################################################################################################
+
+RULE Keycloak read variable value
+CLASS org.keycloak.userprofile.validation.StaticValidators
+METHOD isReadOnlyAttributeUnchanged(String)
+AFTER WRITE $existingAttrValues 1
+IF TRUE
+DO traceln("*** Reading values: { existingAttrValues: " + $existingAttrValues + ", newAttrValues: " + $newAttrValues + ", attributeName: " + $attributeName + " }\n");
+ENDRULE
