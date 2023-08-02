@@ -1,0 +1,34 @@
+##################################################################################################################################################################
+# private void setUserNameFromTemplate(IdentityProviderMapperModel mapperModel, BrokeredIdentityContext context) {
+#       String template = mapperModel.getConfig().get(TEMPLATE);
+#       Matcher m = SUBSTITUTION.matcher(template);
+#       StringBuffer sb = new StringBuffer();
+#       while (m.find()) {
+#           String variable = m.group(1);
+#           UnaryOperator<String> transformer = Optional.ofNullable(m.group(2)).map(TRANSFORMERS::get).orElse(UnaryOperator.identity());
+#           if (variable.equals("ALIAS")) {
+#               m.appendReplacement(sb, transformer.apply(context.getIdpConfig().getAlias()));
+#           } else if (variable.equals("UUID")) {
+#               m.appendReplacement(sb, transformer.apply(KeycloakModelUtils.generateId()));
+#           } else if (variable.startsWith("CLAIM.")) {
+#               String name = variable.substring("CLAIM.".length());
+#               Object value = AbstractClaimMapper.getClaimValue(context, name);
+#               if (value == null) value = "";
+#               m.appendReplacement(sb, transformer.apply(value.toString()));
+#           } else {
+#               m.appendReplacement(sb, m.group(1));
+#           }
+#      }
+#       m.appendTail(sb);
+#       Target t = getTarget(mapperModel.getConfig().get(TARGET));
+#       t.set(context, sb.toString());
+#   }
+##################################################################################################################################################################
+
+RULE Keycloak read username from template value
+CLASS org.keycloak.broker.oidc.mappers.UsernameTemplateMapper
+METHOD setUserNameFromTemplate(IdentityProviderMapperModel, BrokeredIdentityContext)
+AFTER WRITE $value 1
+IF TRUE
+DO traceln("*** \nReading values: { value: " + $value + ", name: " + $name + ", variable: " + $variable + ", template " + $template + " }\n***");
+ENDRULE
